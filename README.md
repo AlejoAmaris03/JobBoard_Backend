@@ -71,7 +71,7 @@ This is the backend API for a **Job Board Management System** developed using **
 ### Access with Default Admin Credentials
   > 📝 You can log in with the following default administrator account, which is automatically created when the application starts.
 
-👤 Enail: admin@example.com  
+👤 Email: admin@example.com  
 🔑 Password: 123
  
 - This account has full access to manage users and companies
