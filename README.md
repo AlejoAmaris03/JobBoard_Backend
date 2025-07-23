@@ -2,7 +2,7 @@
 
 This is the backend API for a **Job Board Management System** developed using **Spring Boot**. The platform facilitates the creation, publication, and management of job offers while allowing users (recruiters and applicants) to interact through a streamlined hiring process.
 
-> 💡 You can find the frontend here: [Job Board Frontend (Angular)](https://github.com/AlejoAmaris03/JobBoardFrontend)
+> 💡 You can find the frontend here: [Job Board Frontend (Angular)](https://github.com/AlejoAmaris03/JobBoard_Frontend)
 
 ---
 
