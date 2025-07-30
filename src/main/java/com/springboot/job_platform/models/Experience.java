@@ -13,32 +13,32 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "experiences")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class User {
+public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
-    private String name;
+    private String jobTitle;
 
     @Column(nullable = false)
-    private String surname;
+    private String companyName;
 
-    @Column(nullable = false)
-    private String email;
+    @Column(nullable = true)
+    private String startDate;
 
-    @Column(nullable = false)
-    private String password;
+    @Column(nullable = true)
+    private String endDate;
 
     @ManyToOne
     @JoinColumn(
-        name = "role_id", 
+        name = "applicant_id",
         nullable = false
     )
-    private Role role;
+    private User applicant;
 }

@@ -44,11 +44,12 @@ public class SecurityConfig {
                 .requestMatchers("/users/update-profile").authenticated()
                 .requestMatchers("/applications/status").hasAnyRole("ADMIN", "APPLICANT")
                 .requestMatchers("/companies").hasAnyRole("ADMIN", "RECRUITER")
-                .requestMatchers("/job-posts/name").hasAnyRole("APPLICANT", "RECRUITER")
+                .requestMatchers("/job-posts/name", "/resumes/full-resume/**").hasAnyRole("APPLICANT", "RECRUITER")
                 .requestMatchers("/users/**", "/companies/**", "/roles/**").hasRole("ADMIN")
                 .requestMatchers("/job-posts/**", "/applications/byId/**", "/applications/byJobId/**", 
                     "/applications/recruiter/**", "/applications/updateStatus/**").hasRole("RECRUITER")
-                .requestMatchers("/applications/**").hasRole("APPLICANT")
+                .requestMatchers("/applications/**", "/cvs/**", "/profile-images/**", "/resumes/**",
+                    "/experiences/**").hasRole("APPLICANT")
             )
             .httpBasic(Customizer.withDefaults())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

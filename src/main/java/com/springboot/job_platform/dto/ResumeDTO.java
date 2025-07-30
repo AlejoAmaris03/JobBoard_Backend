@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class ApplicationDTO {
+public class ResumeDTO {
     private int id;
-    private UserDTO applicant;
-    private String jobName;
-    private String status;
-    private LocalDate appliedAt;
+    private String applicantName;
+    private String title;
+    private String description;
+    private Long phoneNumber;
+    private LocalDate dateOfBirth;
+    private String city;
 }

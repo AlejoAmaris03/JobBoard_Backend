@@ -2,8 +2,6 @@ package com.springboot.job_platform.services;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -13,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.springboot.job_platform.dto.ApplicationDTO;
 import com.springboot.job_platform.dto.JobPostDTO;
+import com.springboot.job_platform.dto.UserDTO;
 import com.springboot.job_platform.models.Application;
+import com.springboot.job_platform.models.User;
 import com.springboot.job_platform.repositories.ApplicationRepository;
 import com.springboot.job_platform.utils.enums.ApplicationStatus;
 
@@ -26,17 +26,10 @@ public class ApplicationService {
     public Map<String, Object> getApplicationById(int applicationId) throws Exception {
         try { 
             Application application = applicationRepo.findById(applicationId).get();
-            ApplicationDTO aplicationDTO = new ApplicationDTO(
-                application.getId(),
-                application.getUser().getName() + " " + application.getUser().getSurname(),
-                application.getJob().getName(),
-                ApplicationStatus.values()[application.getStatus() - 1].toString(),
-                application.getAppliedAt()
-            );
 
             return Map.of(
                 "message", "Application fetched successfully",
-                "application", aplicationDTO
+                "application", getApplicationDTO(application)
             );
         }
         catch (NoSuchElementException e) {
@@ -53,13 +46,7 @@ public class ApplicationService {
             List<Application> applications = applicationRepo.findApplicationsByJobId(jobId);
             List<ApplicationDTO> aplicationsDTO = applications
                 .stream()
-                .map(a -> new ApplicationDTO(
-                    a.getId(),
-                    a.getUser().getName() + " " + a.getUser().getSurname(),
-                    a.getJob().getName(),
-                    ApplicationStatus.values()[a.getStatus() - 1].toString(),
-                    a.getAppliedAt()
-                )).toList();
+                .map(a -> getApplicationDTO(a)).toList();
 
             return Map.of(
                 "message", "Applications fetched successfully",
@@ -77,13 +64,7 @@ public class ApplicationService {
             List<Application> applications = applicationRepo.findApplicationsByUserId(userId);
             List<ApplicationDTO> aplicationsList = applications
                 .stream()
-                .map(a -> new ApplicationDTO(
-                    a.getId(),
-                    a.getUser().getName() + " " + a.getUser().getSurname(),
-                    a.getJob().getName(),
-                    ApplicationStatus.values()[a.getStatus() - 1].toString(),
-                    a.getAppliedAt()
-                ))
+                .map(a -> getApplicationDTO(a))
                 .toList();
 
             return Map.of(
@@ -101,13 +82,12 @@ public class ApplicationService {
         try { 
             List<Application> applications = applicationRepo.findApplicationsByJobUserId(recruiterId);
 
-            // Get the jobs avoiding repetition (creating a Set) and ordering by Job ID
+            // Get the jobs avoiding repetition and ordering by Job ID
             List<JobPostDTO> jobPost = applications
                 .stream()
                 .map(a -> a.getJob())
+                .distinct()
                 .sorted(Comparator.comparing(j -> j.getId())) // Sort the list by id
-                .collect(Collectors.toCollection(LinkedHashSet::new)) // LinkedHashSet -> Keeps the given order and return a Set to avoid the repetition
-                .stream()
                 .map(j -> new JobPostDTO(
                     j.getId(),
                     j.getName(),
@@ -120,25 +100,18 @@ public class ApplicationService {
                     j.getUser().getName() + " " + j.getUser().getSurname()
                 )).toList();
             
-            // Get the number of applications per Job order by Job ID
+            // Get the number of applications per Job
             @SuppressWarnings("unused")
             Map<String, Integer> applicationsPerJob = applications
                 .stream()
-                .sorted(Comparator.comparing(a -> a.getJob().getId()))
                 .collect(Collectors.groupingBy(
-                    a -> a.getJob().getName(), 
-                    LinkedHashMap::new, // LinkedHashMap -> Keeps the given order and return a Map
-                    Collectors.summingInt(x -> 1)));
+                    j -> j.getJob().getName(),
+                    Collectors.summingInt(x -> 1))
+                );
 
             List<ApplicationDTO> aplicationsList = applications
                 .stream()
-                .map(a -> new ApplicationDTO(
-                    a.getId(),
-                    a.getUser().getName() + " " + a.getUser().getSurname(),
-                    a.getJob().getName(),
-                    ApplicationStatus.values()[a.getStatus() - 1].toString(),
-                    a.getAppliedAt()
-                ))
+                .map(a -> getApplicationDTO(a))
                 .toList();
 
             return Map.of(
@@ -164,13 +137,7 @@ public class ApplicationService {
 
             return Map.of(
                 "message", "Application fetched successfully",
-                "application", new ApplicationDTO(
-                    aplication.getId(),
-                    aplication.getUser().getName() + " " + aplication.getUser().getSurname(),
-                    aplication.getJob().getName(),
-                    ApplicationStatus.values()[aplication.getStatus() - 1].toString(),
-                    aplication.getAppliedAt()
-                )
+                "application", getApplicationDTO(aplication)
             );
         }
         catch (Exception e) {
@@ -184,13 +151,7 @@ public class ApplicationService {
             List<Application> applications = applicationRepo.findApplicationsByStatus(status);
             List<ApplicationDTO> aplicationsList = applications
                 .stream()
-                .map(a -> new ApplicationDTO(
-                    a.getId(),
-                    a.getUser().getName() + " " + a.getUser().getSurname(),
-                    a.getJob().getName(),
-                    ApplicationStatus.values()[a.getStatus() - 1].toString(),
-                    a.getAppliedAt()
-                ))
+                .map(a -> getApplicationDTO(a))
                 .toList();
 
             return Map.of(
@@ -209,13 +170,7 @@ public class ApplicationService {
             List<Application> applications = applicationRepo.findApplicationsByUserIdAndStatus(applicantId, status);
             List<ApplicationDTO> aplicationsList = applications
                 .stream()
-                .map(a -> new ApplicationDTO(
-                    a.getId(),
-                    a.getUser().getName() + " " + a.getUser().getSurname(),
-                    a.getJob().getName(),
-                    ApplicationStatus.values()[a.getStatus() - 1].toString(),
-                    a.getAppliedAt()
-                ))
+                .map(a -> getApplicationDTO(a))
                 .toList();
 
             return Map.of(
@@ -241,13 +196,7 @@ public class ApplicationService {
 
             return Map.of(
                 "message", "Application submitted successfully",
-                "application", new ApplicationDTO(
-                    newApplication.getId(),
-                    newApplication.getUser().getName() + " " + newApplication.getUser().getSurname(),
-                    newApplication.getJob().getName(),
-                    ApplicationStatus.values()[newApplication.getStatus() - 1].toString(),
-                    newApplication.getAppliedAt()
-                )
+                "application", getApplicationDTO(newApplication)
             );
         } 
         catch (Exception e) {
@@ -285,5 +234,25 @@ public class ApplicationService {
         catch (Exception e) {
             throw new Exception("Error deleting application: " + e.getMessage());
         }
+    }
+
+    private ApplicationDTO getApplicationDTO(Application application) {
+        return new ApplicationDTO(
+            application.getId(),
+            getUserDTO(application.getUser()),
+            application.getJob().getName(),
+            ApplicationStatus.values()[application.getStatus() - 1].toString(),
+            application.getAppliedAt()
+        );
+    }
+
+    private UserDTO getUserDTO(User user) {
+        return new UserDTO(
+            user.getId(),
+            user.getName(),
+            user.getSurname(),
+            user.getEmail(),
+            user.getRole().getName()
+        );
     }
 }

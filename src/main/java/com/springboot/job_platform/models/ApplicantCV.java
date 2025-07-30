@@ -6,39 +6,38 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "applicant_cvs")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class User {
+public class ApplicantCV {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
-    private String name;
+    private String cvFileName;
 
     @Column(nullable = false)
-    private String surname;
+    private String cvFileType;
 
+    @Lob
     @Column(nullable = false)
-    private String email;
+    private byte[] cvFileData;
 
-    @Column(nullable = false)
-    private String password;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(
-        name = "role_id", 
+        name = "applicant_id",
         nullable = false
     )
-    private Role role;
+    private User applicant;
 }

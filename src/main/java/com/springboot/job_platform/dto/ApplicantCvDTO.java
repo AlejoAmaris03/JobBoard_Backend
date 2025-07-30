@@ -1,6 +1,5 @@
 package com.springboot.job_platform.dto;
 
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class ApplicationDTO {
+public class ApplicantCvDTO {
     private int id;
-    private UserDTO applicant;
-    private String jobName;
-    private String status;
-    private LocalDate appliedAt;
+    private String applicantName;
+    private String cvFileName;
+    private String cvFileType;
+    private byte[] cvFileData;
 }

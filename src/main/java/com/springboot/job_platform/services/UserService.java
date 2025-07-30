@@ -13,8 +13,6 @@ import com.springboot.job_platform.dto.UserDTO;
 import com.springboot.job_platform.models.User;
 import com.springboot.job_platform.repositories.UserRepository;
 import jakarta.mail.MessagingException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 @Service
 
@@ -30,9 +28,6 @@ public class UserService {
 
     @Autowired
     private JwtService jwtService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public List<UserDTO> getAllUsers(int userLoggedInId) throws Exception {
         try {
@@ -67,9 +62,7 @@ public class UserService {
                 temporaryPassword.append(elements.charAt(index));
             }
 
-            entityManager.detach(userRetrieved);
-            userRetrieved.setPassword(passwordEncoder.encode(temporaryPassword.toString()));
-            userRepo.updatePassword(userRetrieved.getId(), userRetrieved.getPassword());
+            userRepo.updatePassword(userRetrieved.getId(), passwordEncoder.encode(temporaryPassword.toString()));
 
             try {
                 emailSenderService.sendEmailToRestorePassword(userRetrieved, temporaryPassword.toString(), "Reset your password");   
