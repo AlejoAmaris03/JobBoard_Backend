@@ -18,6 +18,7 @@ This is the backend API for a **Job Board Management System** developed using **
 - 📝 Applicants can:
   - View and apply to job offers
   - Manage their own applications
+  - Manage their resume information
 - 📂 Admins can manage users and oversee platform activity
 - 🔍 Filter and search job offers
 - 📄 RESTful API architecture
